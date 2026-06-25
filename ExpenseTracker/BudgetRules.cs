@@ -117,7 +117,7 @@ public static class BudgetRules
     /// </summary>
     public static string FormatCurrency(decimal amount, string currencySymbol)
     {
-        return $"{currencySymbol}{amount}";
+        return $"{currencySymbol}{amount:F2}";
     }
 }
 
