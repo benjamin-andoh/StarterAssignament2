@@ -12,6 +12,8 @@
 //  Work one method at a time. Run the tests, watch them turn green.
 //  All methods are pure: no Console I/O, no shared state.
 // =====================================================================
+using System.Drawing;
+
 namespace ExpenseTracker;
 
 public static class BudgetRules
@@ -26,8 +28,11 @@ public static class BudgetRules
     /// </summary>
     public static decimal ValidateAmount(decimal amount)
     {
-        // TODO: guard clauses + decimal.Round(amount, 2)
-        throw new NotImplementedException();
+        if (amount <= 0 || amount > MaxAmount)
+        {
+            throw new InvalidExpenseException();
+        }
+        return decimal.Round(amount, 2);
     }
 
     /// <summary>
@@ -38,8 +43,18 @@ public static class BudgetRules
     /// </summary>
     public static string ClassifyAmount(decimal amount)
     {
-        // TODO
-        throw new NotImplementedException();
+        if (amount <= 0 )
+        {
+            throw new InvalidExpenseException;
+        };
+        
+        return amount switch 
+        { 
+            <10 => "Micro",
+            <50 => "Small",
+            <200 => "Medium",
+            _ => "Large"
+        };
     }
 
     /// <summary>
