@@ -66,8 +66,31 @@ public static class BudgetRules
     /// </summary>
     public static string? NormalizeCategory(string? input)
     {
-        // TODO
-        throw new NotImplementedException();
+        switch (input)
+        {
+            case input throw new InvalidExpenseException;
+throw new InvalidExpenseException();
+public static string? NormalizeCategory(string? input)
+{
+    if (input == null) return null;
+    var normalized = input.Trim().ToLowerInvariant();
+    return normalized switch
+    {
+        "food" or "f" => "Food",
+        "transport" or "t" => "Transport",
+        "utilities" or "u" => "Utilities",
+        "entertainment" or "e" => "Entertainment",
+        "other" or "o" => "Other",
+        _ => null
+    };
+} "Food":
+                    break;
+            case input = "Transport":
+            default:
+                break;
+        }
+
+        return input;
     }
 
     /// <summary>
