@@ -50,6 +50,7 @@ string Category = "";
 DateTime WhatDate = DateTime.Today;
 string Note = "";
 string Recorded = "";
+Decimal Budget = 0;
 
 switch (choice)
 {
@@ -69,6 +70,7 @@ switch (choice)
 
         // category
         Console.WriteLine("Category    : [Food/Transport/Utilities/Entertainment/Other] ");
+        NormalizeCategory(Category);
 
         // Date
         Console.WriteLine("Date (blank = today): ");

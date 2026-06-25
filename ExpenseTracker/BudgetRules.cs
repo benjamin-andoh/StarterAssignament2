@@ -28,10 +28,10 @@ public static class BudgetRules
     /// </summary>
     public static decimal ValidateAmount(decimal amount)
     {
-        if (amount <= 0 || amount > MaxAmount)
-        {
-            throw new InvalidExpenseException();
-        }
+        //if (amount <= 0 || amount > MaxAmount)
+        //{
+        //    throw new InvalidExpenseException();
+        //}
         return decimal.Round(amount, 2);
     }
 
@@ -43,10 +43,10 @@ public static class BudgetRules
     /// </summary>
     public static string ClassifyAmount(decimal amount)
     {
-        if (amount <= 0 )
-        {
-            throw new InvalidExpenseException;
-        };
+        //if (amount <= 0 )
+        //{
+        //    throw new InvalidExpenseException;
+        //};
         
         return amount switch 
         { 
@@ -66,31 +66,17 @@ public static class BudgetRules
     /// </summary>
     public static string? NormalizeCategory(string? input)
     {
-        switch (input)
+        if (input == null) return null;
+        var NormalizedCategory = input.Trim().ToLowerInvariant();
+        return NormalizedCategory switch
         {
-            case input throw new InvalidExpenseException;
-throw new InvalidExpenseException();
-public static string? NormalizeCategory(string? input)
-{
-    if (input == null) return null;
-    var normalized = input.Trim().ToLowerInvariant();
-    return normalized switch
-    {
-        "food" or "f" => "Food",
-        "transport" or "t" => "Transport",
-        "utilities" or "u" => "Utilities",
-        "entertainment" or "e" => "Entertainment",
-        "other" or "o" => "Other",
-        _ => null
-    };
-} "Food":
-                    break;
-            case input = "Transport":
-            default:
-                break;
-        }
-
-        return input;
+            "food" or "f" => "Food",
+            "transport" or "t" => "Transport",
+            "utilities" or "u" => "Utilities",
+            "entertainment" or "e" => "Entertainment",
+            "other" or "o" => "Other",
+            _ => null
+        };
     }
 
     /// <summary>
@@ -100,8 +86,32 @@ public static string? NormalizeCategory(string? input)
     /// </summary>
     public static string BudgetStatus(decimal remaining, decimal monthlyLimit)
     {
-        // TODO
-        throw new NotImplementedException();
+        decimal percentMonthlyLimit = 10 * (monthlyLimit / 100);
+
+        return remaining switch
+        {
+            CS0029: Cannot implicitly convert type 'bool' to 'decimal'
+return remaining switch
+{
+    remaining < 0 => "OVER BUDGET",
+    remaining > remaining / 100
+    default
+};
+public static string BudgetStatus(decimal remaining, decimal monthlyLimit)
+{
+    if (monthlyLimit <= 0)
+        throw new InvalidExpenseException("Monthly limit must be positive.");
+
+    if (remaining < 0)
+        return "OVER BUDGET";
+    else if (remaining < monthlyLimit * NearLimitFraction)
+        return "Almost out";
+    else
+        return "On track";
+} => "OVER BUDGET",
+            remaining > remaining / 100
+            default
+        };
     }
 
     /// <summary>
