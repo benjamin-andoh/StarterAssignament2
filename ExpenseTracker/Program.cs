@@ -59,89 +59,18 @@ bool valid = false;
 switch (choice)
 {
     case 1:
-        // Description 
-        Console.WriteLine("Description: ");
-        Console.ReadLine();
-
-        // Amount 
-        Console.WriteLine("Amount     : ");
-        if (!decimal.TryParse(Console.ReadLine(), out Amount))
-        {
-            Console.WriteLine("Amount must be a number");
-        }
-        ;
-        ValidateAmount(Amount);
-
-        // category
-        Console.WriteLine("Category    : [Food/Transport/Utilities/Entertainment/Other] ");
-        
-        NormalizeCategory(Category);
-
-        // Date
-        Console.WriteLine("Date (blank = today): ");
-        if (!DateTime.TryParse( Console.ReadLine(), out WhatDate))
-        {
-            Console.WriteLine("enter a valid date");
-        }
-        //if (WhatDate.IsEmpty)
-        //{
-        //    WhatDate = DateTime.Today;
-        //}
-        //if (WhatDate )
-
-
-        // Note
-        Console.WriteLine("Note (optional): ");
-
-        // Recorded
-        Console.WriteLine("Recorded: ");
-
-        // Size Band
-        Console.WriteLine("Size band: ");
-
-        // Budget
-        Console.WriteLine("Budget: ");
+        AddExpense(ref Budget, ref Amount, ref valid);
         break;
+
     case 2:
-        Console.WriteLine(doubleLinePrint);
-        Console.WriteLine("View Summary");
-        Console.WriteLine(doubleLinePrint);
-        // budget
-        if (Budget <= 0)
-        {
-            Console.WriteLine("No budget has been set yet!");
-            break;
-        }
-
-        // total spent - remaining budget - Budget status
-        decimal spent = Amount;
-        decimal remainder = Budget - spent;
-        Console.WriteLine($"Budget: {FormatCurrency(Budget)}");
-        Console.WriteLine($"Spent:  {FormatCurrency(spent)}");
-        Console.WriteLine($"Remaining: {FormatCurrency(remainder)} -> {BudgetStatus(remainder, Budget)}");
-        
-
+        ViewSummary(Budget, Amount);
         break;
+
     case 3:
-
-        Remaining = Budget;
-        Console.WriteLine("Monthly budget: ");
-        while (!valid) { 
-            if (!decimal.TryParse(Console.ReadLine(), out Budget) || Budget <= 0 )
-            {
-                Console.WriteLine("pleas input a number");
-                continue;
-            };
-            valid = true;
-        }
-        Console.WriteLine($"Budget set to {FormatCurrency(Budget)}.");
-        Console.WriteLine($"Budget: {FormatCurrency(Remaining)} remaining of {Budget} -> {BudgetStatus(Remaining, Budget)}");
+        SetBudget(ref Budget, ref valid);
         break;
+
     default:
+        Console.WriteLine("Invalid option");
         break;
 }
-
-//Console.WriteLine($"this is your chioce {choice}");
-
-
-
