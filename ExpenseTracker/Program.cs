@@ -53,6 +53,7 @@ string Note = "";
 string Recorded = "";
 Decimal Budget = 0;
 decimal Remaining = 0;
+bool valid = false;
 
 switch (choice)
 {
@@ -104,20 +105,24 @@ switch (choice)
         break;
     case 3:
 
-        Remaining = Budget - Amount;
+        //Remaining = Budget - Amount;
         Console.WriteLine("Monthly budget: ");
-        if (!decimal.TryParse(Console.ReadLine(), out Budget))
-        {
-            Console.WriteLine("pleas input a number");
-        };
-        Console.WriteLine($"Budget set to {Budget}");
-        BudgetStatus(Remaining, Budget);
+        while (!valid) { 
+            if (!decimal.TryParse(Console.ReadLine(), out Budget) || Budget < 0 )
+            {
+                Console.WriteLine("pleas input a number");
+                continue;
+            };
+            valid = true;
+        }
+        Console.WriteLine($"Budget set to {FormatCurrency(Budget)}");
+        Console.WriteLine($"{FormatCurrency(Budget)} remaining of {Budget} -> {BudgetStatus(Remaining, Budget)}");
         break;
     default:
         break;
 }
 
-Console.WriteLine($"this is your chioce {choice}");
+//Console.WriteLine($"this is your chioce {choice}");
 
 
 
