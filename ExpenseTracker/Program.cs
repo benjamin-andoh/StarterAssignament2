@@ -45,14 +45,7 @@ while (!intake)
     intake = true;
 }
 
-string Description = "";
-
-string Category = "";
-DateTime WhatDate;
-string Note = "";
-string Recorded = "";
 decimal Budget=0;
-decimal Remaining;
 decimal Amount = 0;
 bool valid = false;
 
@@ -70,43 +63,59 @@ switch (choice)
         SetBudget(ref Budget, ref valid);
         break;
 
+    case 4:
+        Console.WriteLine("You are logged out of your Account");
+        break;
     default:
         Console.WriteLine("Invalid option");
         break;
 }
+
 static void AddExpense(ref decimal budget, ref decimal amount, ref bool valid)
 {
-    Console.WriteLine("Description: ");
-    string description = Console.ReadLine();
-
-    Console.WriteLine("Amount: ");
-    if (!decimal.TryParse(Console.ReadLine(), out amount))
+    try
     {
-        Console.WriteLine("Amount must be a number");
-        return;
+        Console.WriteLine("Description: ");
+        string description = Console.ReadLine();
+
+        Console.WriteLine("Amount: ");
+        if (!decimal.TryParse(Console.ReadLine(), out amount))
+        {
+            Console.WriteLine("Amount must be a number");
+            return;
+        }
+
+        amount = ValidateAmount(amount);
+
+        Console.WriteLine("Category [Food/Transport/Utilities/Entertainment/Other]: ");
+        string categoryInput = Console.ReadLine();
+        string category = NormalizeCategory(categoryInput) ?? "Other";
+
+        Console.WriteLine("Date (blank = today): ");
+        string dateInput = Console.ReadLine();
+
+        DateTime date;
+        if (!DateTime.TryParse(dateInput, out date))
+        {
+            date = DateTime.Today;
+        }
+
+        Console.WriteLine("Note (optional): ");
+        string note = Console.ReadLine();
+
+        Console.WriteLine("Size band: " + ClassifyAmount(amount));
+
+    }
+    catch (Exception ex)
+    {
+
+        throw new Exception("something went wrong");
+    }
+    finally
+    {
+        Console.WriteLine("Expense recorded successfully.");
     }
 
-    amount = ValidateAmount(amount);
-
-    Console.WriteLine("Category [Food/Transport/Utilities/Entertainment/Other]: ");
-    string categoryInput = Console.ReadLine();
-    string category = NormalizeCategory(categoryInput) ?? "Other";
-
-    Console.WriteLine("Date (blank = today): ");
-    string dateInput = Console.ReadLine();
-
-    DateTime date;
-    if (!DateTime.TryParse(dateInput, out date))
-    {
-        date = DateTime.Today;
-    }
-
-    Console.WriteLine("Note (optional): ");
-    string note = Console.ReadLine();
-
-    Console.WriteLine("Size band: " + ClassifyAmount(amount));
-
-    Console.WriteLine("Expense recorded successfully.");
 }
 
 static void ViewSummary(decimal budget, decimal amount)
