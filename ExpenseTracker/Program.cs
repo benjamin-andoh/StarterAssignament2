@@ -46,13 +46,14 @@ while (!intake)
 }
 
 string Description = "";
-decimal Amount = 0;
+
 string Category = "";
 DateTime WhatDate;
 string Note = "";
 string Recorded = "";
-Decimal Budget = 0;
-decimal Remaining = 0;
+decimal Budget=0;
+decimal Remaining;
+decimal Amount = 0;
 bool valid = false;
 
 switch (choice)
@@ -102,21 +103,39 @@ switch (choice)
         Console.WriteLine("Budget: ");
         break;
     case 2:
+        Console.WriteLine(doubleLinePrint);
+        Console.WriteLine("View Summary");
+        Console.WriteLine(doubleLinePrint);
+        // budget
+        if (Budget <= 0)
+        {
+            Console.WriteLine("No budget has been set yet!");
+            break;
+        }
+
+        // total spent - remaining budget - Budget status
+        decimal spent = Amount;
+        decimal remainder = Budget - spent;
+        Console.WriteLine($"Budget: {FormatCurrency(Budget)}");
+        Console.WriteLine($"Spent:  {FormatCurrency(spent)}");
+        Console.WriteLine($"Remaining: {FormatCurrency(remainder)} -> {BudgetStatus(remainder, Budget)}");
+        
+
         break;
     case 3:
 
-        //Remaining = Budget - Amount;
+        Remaining = Budget;
         Console.WriteLine("Monthly budget: ");
         while (!valid) { 
-            if (!decimal.TryParse(Console.ReadLine(), out Budget) || Budget < 0 )
+            if (!decimal.TryParse(Console.ReadLine(), out Budget) || Budget <= 0 )
             {
                 Console.WriteLine("pleas input a number");
                 continue;
             };
             valid = true;
         }
-        Console.WriteLine($"Budget set to {FormatCurrency(Budget)}");
-        Console.WriteLine($"{FormatCurrency(Budget)} remaining of {Budget} -> {BudgetStatus(Remaining, Budget)}");
+        Console.WriteLine($"Budget set to {FormatCurrency(Budget)}.");
+        Console.WriteLine($"Budget: {FormatCurrency(Remaining)} remaining of {Budget} -> {BudgetStatus(Remaining, Budget)}");
         break;
     default:
         break;
