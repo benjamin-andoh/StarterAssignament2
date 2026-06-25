@@ -18,38 +18,6 @@
 //
 //  See section 6 of the assignment brief for a sample run to aim for.
 // =====================================================================
-using ExpenseTracker;
-
-Console.WriteLine("*** Welcome to the Expense Tracker ***");
-Console.WriteLine("Select an option from the Menu");
-Console.WriteLine($"{"1", -10} {"Add Expenses", -30}");
-Console.WriteLine($"{"2", -10} {"View Summary", -30}");
-Console.WriteLine($"{"3", -10} {"Set monthly budget", -30}");
-Console.WriteLine($"{"4", -10} {"Exit", -30}");
-Console.WriteLine();
-
-Dictionary<int, String> menu = new Dictionary<int, string>
-{
-    {1,"Add Expenses" },
-    {2, "View Summary"},
-    {3, "Set Monthly Budget"},
-    {4, "exit" }
-};
-
-decimal choice = 0;
-bool intake = false;
-
-while (!intake)
-{
-    if (!decimal.TryParse(Console.ReadLine(), out choice)  || choice <= 0 || choice >= 4)
-    {
-        Console.WriteLine("Sorry select from the options on the menu");
-        continue;
-    }
-    intake = true;
-}
-
-Console.WriteLine($"this is your chioce {choice}");
 
 
 
