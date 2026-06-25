@@ -113,7 +113,7 @@ static void AddExpense(ref decimal budget, ref decimal amount, ref bool valid)
     }
     finally
     {
-        Console.WriteLine("Expense recorded successfully.");
+        Console.WriteLine("thank you for the transaction");
     }
 
 }
