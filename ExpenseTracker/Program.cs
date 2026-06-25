@@ -108,3 +108,42 @@ static void AddExpense(ref decimal budget, ref decimal amount, ref bool valid)
 
     Console.WriteLine("Expense recorded successfully.");
 }
+
+static void ViewSummary(decimal budget, decimal amount)
+{
+    Console.WriteLine("==============================");
+    Console.WriteLine("View Summary");
+    Console.WriteLine("==============================");
+
+    if (budget <= 0)
+    {
+        Console.WriteLine("No budget has been set yet!");
+        return;
+    }
+
+    decimal spent = amount;
+    decimal remaining = budget - spent;
+
+    Console.WriteLine($"Budget:    {FormatCurrency(budget)}");
+    Console.WriteLine($"Spent:     {FormatCurrency(spent)}");
+    Console.WriteLine($"Remaining: {FormatCurrency(remaining)} -> {BudgetStatus(remaining, budget)}");
+}
+
+static void SetBudget(ref decimal budget, ref bool valid)
+{
+    Console.WriteLine("Monthly budget: ");
+
+    while (!valid)
+    {
+        if (!decimal.TryParse(Console.ReadLine(), out budget) || budget <= 0)
+        {
+            Console.WriteLine("please input a valid number");
+            continue;
+        }
+
+        valid = true;
+    }
+
+    Console.WriteLine($"Budget set to {FormatCurrency(budget)}.");
+    Console.WriteLine($"Budget: {FormatCurrency(budget)} remaining of {FormatCurrency(budget)} -> {BudgetStatus(budget, budget)}");
+}
