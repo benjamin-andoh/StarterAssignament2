@@ -12,8 +12,6 @@
 //  Work one method at a time. Run the tests, watch them turn green.
 //  All methods are pure: no Console I/O, no shared state.
 // =====================================================================
-using System.Drawing;
-
 namespace ExpenseTracker;
 
 public static class BudgetRules
@@ -28,10 +26,10 @@ public static class BudgetRules
     /// </summary>
     public static decimal ValidateAmount(decimal amount)
     {
-        //if (amount <= 0 || amount > MaxAmount)
-        //{
-        //    throw new InvalidExpenseException();
-        //}
+        if (amount <= 0 || amount > MaxAmount)
+        {
+            throw new InvalidExpenseException("Amount must be greater than zero and not exceed the maximum limit.");
+        }
         return decimal.Round(amount, 2);
     }
 
@@ -43,16 +41,16 @@ public static class BudgetRules
     /// </summary>
     public static string ClassifyAmount(decimal amount)
     {
-        //if (amount <= 0 )
-        //{
-        //    throw new InvalidExpenseException;
-        //};
-        
-        return amount switch 
-        { 
-            <10 => "Micro",
-            <50 => "Small",
-            <200 => "Medium",
+        if (amount <= 0)
+        {
+            throw new InvalidExpenseException("");
+        }
+
+        return amount switch
+        {
+            < 10 => "Micro",
+            < 50 => "Small",
+            < 200 => "Medium",
             _ => "Large"
         };
     }
@@ -86,32 +84,23 @@ public static class BudgetRules
     /// </summary>
     public static string BudgetStatus(decimal remaining, decimal monthlyLimit)
     {
-        decimal percentMonthlyLimit = 10 * (monthlyLimit / 100);
 
-        return remaining switch
+        if (monthlyLimit <= 0)
         {
-            CS0029: Cannot implicitly convert type 'bool' to 'decimal'
-return remaining switch
-{
-    remaining < 0 => "OVER BUDGET",
-    remaining > remaining / 100
-    default
-};
-public static string BudgetStatus(decimal remaining, decimal monthlyLimit)
-{
-    if (monthlyLimit <= 0)
-        throw new InvalidExpenseException("Monthly limit must be positive.");
+            throw new InvalidExpenseException("Monthly limit must be positive.");
+        }
 
-    if (remaining < 0)
-        return "OVER BUDGET";
-    else if (remaining < monthlyLimit * NearLimitFraction)
-        return "Almost out";
-    else
-        return "On track";
-} => "OVER BUDGET",
-            remaining > remaining / 100
-            default
-        };
+        if (remaining < 0)
+        {
+            return "OVER BUDGET";
+        }
+        else if (remaining < monthlyLimit * NearLimitFraction)
+        {
+            return "Almost out";
+        }
+        else { 
+            return "On track";
+        } 
     }
 
     /// <summary>
@@ -121,7 +110,6 @@ public static string BudgetStatus(decimal remaining, decimal monthlyLimit)
     public static string FormatCurrency(decimal amount)
     {
         return FormatCurrency(amount, "$");
-        //throw new NotImplementedException();
     }
 
     /// <summary>
@@ -129,8 +117,7 @@ public static string BudgetStatus(decimal remaining, decimal monthlyLimit)
     /// </summary>
     public static string FormatCurrency(decimal amount, string currencySymbol)
     {
-        // TODO: use a "0.00" format string
-        throw new NotImplementedException();
+        return $"{currencySymbol}{amount}";
     }
 }
 

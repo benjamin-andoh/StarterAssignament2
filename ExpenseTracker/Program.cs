@@ -18,6 +18,7 @@
 //
 //  See section 6 of the assignment brief for a sample run to aim for.
 // =====================================================================
+
 using ExpenseTracker;
 using System.ComponentModel;
 using static ExpenseTracker.BudgetRules;
@@ -36,7 +37,7 @@ bool intake = false;
 
 while (!intake)
 {
-    if (!decimal.TryParse(Console.ReadLine(), out choice) || choice <= 0 || choice >= 4)
+    if (!decimal.TryParse(Console.ReadLine(), out choice) || choice <= 0 || choice >= 5)
     {
         Console.WriteLine("Sorry select from the options on the menu");
         continue;
@@ -47,10 +48,11 @@ while (!intake)
 string Description = "";
 decimal Amount = 0;
 string Category = "";
-DateTime WhatDate = DateTime.Today;
+DateTime WhatDate;
 string Note = "";
 string Recorded = "";
 Decimal Budget = 0;
+decimal Remaining = 0;
 
 switch (choice)
 {
@@ -70,10 +72,21 @@ switch (choice)
 
         // category
         Console.WriteLine("Category    : [Food/Transport/Utilities/Entertainment/Other] ");
+        
         NormalizeCategory(Category);
 
         // Date
         Console.WriteLine("Date (blank = today): ");
+        if (!DateTime.TryParse( Console.ReadLine(), out WhatDate))
+        {
+            Console.WriteLine("enter a valid date");
+        }
+        //if (WhatDate.IsEmpty)
+        //{
+        //    WhatDate = DateTime.Today;
+        //}
+        //if (WhatDate )
+
 
         // Note
         Console.WriteLine("Note (optional): ");
@@ -90,6 +103,15 @@ switch (choice)
     case 2:
         break;
     case 3:
+
+        Remaining = Budget - Amount;
+        Console.WriteLine("Monthly budget: ");
+        if (!decimal.TryParse(Console.ReadLine(), out Budget))
+        {
+            Console.WriteLine("pleas input a number");
+        };
+        Console.WriteLine($"Budget set to {Budget}");
+        BudgetStatus(Remaining, Budget);
         break;
     default:
         break;
