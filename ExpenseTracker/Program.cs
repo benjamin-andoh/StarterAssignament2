@@ -20,102 +20,118 @@
 // =====================================================================
 
 using ExpenseTracker;
+using System.Collections.Concurrent;
 using System.ComponentModel;
 using static ExpenseTracker.BudgetRules;
 
-string doubleLinePrint = "=====================================================================";
-
-Console.WriteLine(doubleLinePrint);
-Console.WriteLine("MyBudget Expense Tracker");
-Console.WriteLine(doubleLinePrint);
-
-Console.WriteLine($" 1) Add an expense   2) View summary   3) Set monthly budget   4) Exit");
-Console.Write(">");
-
+string doubleLinePrint = "=======================================================";
 decimal choice = 0;
-bool intake = false;
+bool exit = false;
+decimal Budget = 0;
+decimal Amount = 0;
+bool valid = false;
+decimal remaining = 0;
 
-while (!intake)
+while (!exit)
 {
+    Console.WriteLine(doubleLinePrint);
+    Console.WriteLine("MyBudget Expense Tracker");
+    Console.WriteLine(doubleLinePrint);
+    Console.WriteLine($" 1) Add an expense   2) View summary   3) Set monthly budget   4) Exit");
+    Console.Write(">");
+
     if (!decimal.TryParse(Console.ReadLine(), out choice) || choice <= 0 || choice >= 5)
     {
         Console.WriteLine("Sorry select from the options on the menu");
         continue;
     }
-    intake = true;
+
+    switch (choice)
+    {
+        case 1:
+            AddExpense(ref Budget, ref Amount, ref remaining);
+            break;
+
+        case 2:
+            ViewSummary(Budget, Amount);
+            break;
+
+        case 3:
+            SetBudget(ref Budget, ref valid);
+            break;
+
+        case 4:
+            exit = true;
+            Console.WriteLine("You are logged out of your Account");
+            break;
+        default:
+            Console.WriteLine("Please choose an option from 1 to 4.");
+            break;
+    }
+    Console.WriteLine();
 }
 
-decimal Budget=0;
-decimal Amount = 0;
-bool valid = false;
-
-switch (choice)
-{
-    case 1:
-        AddExpense(ref Budget, ref Amount, ref valid);
-        break;
-
-    case 2:
-        ViewSummary(Budget, Amount);
-        break;
-
-    case 3:
-        SetBudget(ref Budget, ref valid);
-        break;
-
-    case 4:
-        Console.WriteLine("You are logged out of your Account");
-        break;
-    default:
-        Console.WriteLine("Invalid option");
-        break;
-}
-
-static void AddExpense(ref decimal budget, ref decimal amount, ref bool valid)
+static void AddExpense(ref decimal budget, ref decimal amount, ref decimal remaining)
 {
     try
     {
-        Console.WriteLine("Description: ");
-        string description = Console.ReadLine();
+        Console.Write("Description: ");
+        string? description = Console.ReadLine();
 
-        Console.WriteLine("Amount: ");
-        if (!decimal.TryParse(Console.ReadLine(), out amount))
+        Console.Write("Amount: ");
+        if (!decimal.TryParse(Console.ReadLine(), out decimal expenseAmount))
         {
-            Console.WriteLine("Amount must be a number");
+            Console.WriteLine("Amount must be a valid number.");
             return;
         }
 
-        amount = ValidateAmount(amount);
+        expenseAmount = ValidateAmount(expenseAmount);
 
-        Console.WriteLine("Category [Food/Transport/Utilities/Entertainment/Other]: ");
-        string categoryInput = Console.ReadLine();
+        Console.Write("Category [Food/Transport/Utilities/Entertainment/Other]: ");
+        string? categoryInput = Console.ReadLine();
         string category = NormalizeCategory(categoryInput) ?? "Other";
 
-        Console.WriteLine("Date (blank = today): ");
-        string dateInput = Console.ReadLine();
+        Console.Write("Date (blank = today): ");
+        string? dateInput = Console.ReadLine();
 
         DateTime date;
-        if (!DateTime.TryParse(dateInput, out date))
+        if (string.IsNullOrWhiteSpace(dateInput))
         {
             date = DateTime.Today;
         }
+        else if (!DateTime.TryParse(dateInput, out date))
+        {
+            Console.WriteLine("Invalid date. Using today's date.");
+            date = DateTime.Today;
+        }
 
-        Console.WriteLine("Note (optional): ");
-        string note = Console.ReadLine();
+        Console.Write("Note (optional): ");
+        string? note = Console.ReadLine();
 
-        Console.WriteLine("Size band: " + ClassifyAmount(amount));
+        // Update totals
+        amount += expenseAmount;
+        remaining = budget - amount;
 
+        Console.WriteLine();
+        Console.WriteLine("Expense recorded successfully!");
+        Console.WriteLine($"Description : {description}");
+        Console.WriteLine($"Amount      : {FormatCurrency(expenseAmount)}");
+        Console.WriteLine($"Category    : {category}");
+        Console.WriteLine($"Date        : {date:d}");
+        Console.WriteLine($"Size Band   : {ClassifyAmount(expenseAmount)}");
+
+        Console.WriteLine();
+        Console.WriteLine($"Remaining: {FormatCurrency(remaining)} -> {BudgetStatus(remaining, budget)}");
     }
-    catch (Exception ex)
+    catch (InvalidExpenseException ex)
     {
-
-        throw new Exception("something went wrong");
+        Console.WriteLine(ex.Message);
     }
     finally
     {
-        Console.WriteLine("thank you for the transaction");
+        Console.WriteLine();
+        Console.WriteLine("Thank you for the transaction.");
     }
-
 }
 
 static void ViewSummary(decimal budget, decimal amount)
