@@ -18,41 +18,157 @@
 //
 //  See section 6 of the assignment brief for a sample run to aim for.
 // =====================================================================
+
 using ExpenseTracker;
+using System.Collections.Concurrent;
+using System.ComponentModel;
+using static ExpenseTracker.BudgetRules;
 
-Console.WriteLine("*** Welcome to the Expense Tracker ***");
-Console.WriteLine("Select an option from the Menu");
-Console.WriteLine($"{"1", -10} {"Add Expenses", -30}");
-Console.WriteLine($"{"2", -10} {"View Summary", -30}");
-Console.WriteLine($"{"3", -10} {"Set monthly budget", -30}");
-Console.WriteLine($"{"4", -10} {"Exit", -30}");
-Console.WriteLine();
-
-Dictionary<int, String> menu = new Dictionary<int, string>
-{
-    {1,"Add Expenses" },
-    {2, "View Summary"},
-    {3, "Set Monthly Budget"},
-    {4, "exit" }
-};
-
+string doubleLinePrint = "=======================================================";
 decimal choice = 0;
-bool intake = false;
+bool exit = false;
+decimal Budget = 0;
+decimal Amount = 0;
+bool valid = false;
+decimal remaining = 0;
 
-while (!intake)
+while (!exit)
 {
-    if (!decimal.TryParse(Console.ReadLine(), out choice)  || choice <= 0 || choice >= 4)
+    Console.WriteLine(doubleLinePrint);
+    Console.WriteLine("MyBudget Expense Tracker");
+    Console.WriteLine(doubleLinePrint);
+    Console.WriteLine($" 1) Add an expense   2) View summary   3) Set monthly budget   4) Exit");
+    Console.Write(">");
+
+    if (!decimal.TryParse(Console.ReadLine(), out choice) || choice <= 0 || choice >= 5)
     {
         Console.WriteLine("Sorry select from the options on the menu");
         continue;
     }
-    intake = true;
+
+    switch (choice)
+    {
+        case 1:
+            AddExpense(ref Budget, ref Amount, ref remaining);
+            break;
+
+        case 2:
+            ViewSummary(Budget, Amount);
+            break;
+
+        case 3:
+            SetBudget(ref Budget, ref valid);
+            break;
+
+        case 4:
+            exit = true;
+            Console.WriteLine("You are logged out of your Account");
+            break;
+        default:
+            Console.WriteLine("Please choose an option from 1 to 4.");
+            break;
+    }
+    Console.WriteLine();
 }
 
-Console.WriteLine($"this is your chioce {choice}");
+static void AddExpense(ref decimal budget, ref decimal amount, ref decimal remaining)
+{
+    try
+    {
+        Console.Write("Description: ");
+        string? description = Console.ReadLine();
 
+        Console.Write("Amount: ");
+        if (!decimal.TryParse(Console.ReadLine(), out decimal expenseAmount))
+        {
+            Console.WriteLine("Amount must be a valid number.");
+            return;
+        }
 
+        expenseAmount = ValidateAmount(expenseAmount);
 
+        Console.Write("Category [Food/Transport/Utilities/Entertainment/Other]: ");
+        string? categoryInput = Console.ReadLine();
+        string category = NormalizeCategory(categoryInput) ?? "Other";
 
+        Console.Write("Date (blank = today): ");
+        string? dateInput = Console.ReadLine();
 
+        DateTime date;
+        if (string.IsNullOrWhiteSpace(dateInput))
+        {
+            date = DateTime.Today;
+        }
+        else if (!DateTime.TryParse(dateInput, out date))
+        {
+            Console.WriteLine("Invalid date. Using today's date.");
+            date = DateTime.Today;
+        }
 
+        Console.Write("Note (optional): ");
+        string? note = Console.ReadLine();
+
+        // Update totals
+        amount += expenseAmount;
+        remaining = budget - amount;
+
+        Console.WriteLine();
+        Console.WriteLine("Expense recorded successfully!");
+        Console.WriteLine($"Description : {description}");
+        Console.WriteLine($"Amount      : {FormatCurrency(expenseAmount)}");
+        Console.WriteLine($"Category    : {category}");
+        Console.WriteLine($"Date        : {date:d}");
+        Console.WriteLine($"Size Band   : {ClassifyAmount(expenseAmount)}");
+
+        Console.WriteLine();
+        Console.WriteLine($"Remaining: {FormatCurrency(remaining)} -> {BudgetStatus(remaining, budget)}");
+    }
+    catch (InvalidExpenseException ex)
+    {
+        Console.WriteLine(ex.Message);
+    }
+    finally
+    {
+        Console.WriteLine();
+        Console.WriteLine("Thank you for the transaction.");
+    }
+}
+
+static void ViewSummary(decimal budget, decimal amount)
+{
+    Console.WriteLine("==============================");
+    Console.WriteLine("View Summary");
+    Console.WriteLine("==============================");
+
+    if (budget <= 0)
+    {
+        Console.WriteLine("No budget has been set yet!");
+        return;
+    }
+
+    decimal spent = amount;
+    decimal remaining = budget - spent;
+
+    Console.WriteLine($"Budget:    {FormatCurrency(budget)}");
+    Console.WriteLine($"Spent:     {FormatCurrency(spent)}");
+    Console.WriteLine($"Remaining: {FormatCurrency(remaining)} -> {BudgetStatus(remaining, budget)}");
+}
+
+static void SetBudget(ref decimal budget, ref bool valid)
+{
+    Console.WriteLine("Monthly budget: ");
+
+    while (!valid)
+    {
+        if (!decimal.TryParse(Console.ReadLine(), out budget) || budget <= 0)
+        {
+            Console.WriteLine("please input a valid number");
+            continue;
+        }
+
+        valid = true;
+    }
+
+    Console.WriteLine($"Budget set to {FormatCurrency(budget)}.");
+    Console.WriteLine($"Budget: {FormatCurrency(budget)} remaining of {FormatCurrency(budget)} -> {BudgetStatus(budget, budget)}");
+}
